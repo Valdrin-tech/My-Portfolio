@@ -1,5 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import { motion } from 'framer-motion';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const skills = [
   { label: 'React Js' },
@@ -21,7 +23,7 @@ const scroll = keyframes`
   100% { transform: translateX(-50%); }
 `;
 
-const SkillsSection = styled.section`
+const SkillsSection = styled(motion.section)`
   width: 100vw;
   overflow: hidden;
   background: transparent;
@@ -61,13 +63,29 @@ const SkillPill = styled.div`
     color: ${({ theme }) => theme.text};
     opacity: 0.3;
   }
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    gap: 1rem;
+    margin-right: 2rem;
+    &::after {
+      margin-left: 2rem;
+    }
+  }
 `;
 
 const Skills = () => {
+  const [ref, isVisible] = useScrollAnimation(0.1);
   // Repeat the skills to ensure smooth looping
   const marqueeSkills = [...skills, ...skills, ...skills];
   return (
-    <SkillsSection id="skills">
+    <SkillsSection 
+      id="skills" 
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+      transition={{ duration: 1 }}
+    >
       <MarqueeWrapper>
         <MarqueeTrack>
           {marqueeSkills.map((skill, i) => (

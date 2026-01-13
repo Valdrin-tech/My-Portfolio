@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { motion } from 'framer-motion';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
-const AboutSection = styled.section`
+const AboutSection = styled(motion.section)`
   width: 100%;
   padding: 10rem 2rem;
   background: ${({ theme }) => theme.bg};
@@ -10,9 +12,13 @@ const AboutSection = styled.section`
   align-items: center;
   overflow: hidden;
   position: relative;
+
+  @media (max-width: 768px) {
+    padding: 6rem 1.5rem;
+  }
 `;
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   max-width: 1200px;
   width: 100%;
   display: grid;
@@ -21,10 +27,6 @@ const Container = styled.div`
   align-items: center;
   position: relative;
   z-index: 2;
-
-  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  transform: ${({ $visible }) => ($visible ? 'translateY(0)' : 'translateY(50px)')};
-  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 
   @media (max-width: 968px) {
     grid-template-columns: 1fr;
@@ -284,22 +286,17 @@ const ExternalLink = styled.a`
 `;
 
 const About = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef();
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { entry.isIntersecting && setIsVisible(true); },
-      { threshold: 0.2 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => ref.current && observer.unobserve(ref.current);
-  }, []);
+  const [ref, isVisible] = useScrollAnimation(0.2);
 
   return (
     <AboutSection id="about">
       <DecorativeText>Vision</DecorativeText>
-      <Container ref={ref} $visible={isVisible}>
+      <Container 
+        ref={ref}
+        initial={{ opacity: 0, y: 50 }}
+        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      >
         <ImageSide>
           <ImageWrapper>
             <TerminalWindow>

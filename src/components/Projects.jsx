@@ -1,13 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
-const ProjectsSection = styled.section`
+const ProjectsSection = styled(motion.section)`
   width: 100%;
   padding: 8rem 2rem;
   background: ${({ theme }) => theme.bg};
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 6rem 1.5rem;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -29,14 +35,11 @@ const ProjectsContainer = styled.div`
   gap: 12rem;
 `;
 
-const ProjectCard = styled.div`
+const ProjectCard = styled(motion.div)`
   display: grid;
   grid-template-columns: ${({ $reverse }) => ($reverse ? '1fr 1.2fr' : '1.2fr 1fr')};
   align-items: center;
   position: relative;
-  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  transform: ${({ $visible }) => ($visible ? 'translateY(0)' : 'translateY(80px)')};
-  transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
 
   @media (max-width: 968px) {
     grid-template-columns: 1fr;
@@ -148,31 +151,23 @@ const ViewLink = styled.a`
 `;
 
 const ProjectItem = ({ project, index }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef();
+  const [ref, isVisible] = useScrollAnimation(0.2);
   const isEven = index % 2 === 0;
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => {
-      if (ref.current) observer.unobserve(ref.current);
-    };
-  }, []);
 
   const categories = ['BRANDING', 'PRODUCT DESIGN', 'UI/UX DESIGN', 'WEB DEVELOPMENT'];
   const colors = ['#f8b4d9', '#f8d2b4', '#b4f8e0', '#b4d7f8'];
 
   return (
-    <ProjectCard ref={ref} $visible={isVisible} $index={index} $reverse={!isEven}>
+    <ProjectCard 
+      ref={ref}
+      $reverse={!isEven}
+      initial={{ opacity: 0, y: 80 }}
+      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 80 }}
+      transition={{ 
+        duration: 1,
+        ease: [0.165, 0.84, 0.44, 1]
+      }}
+    >
       <ImageWrapper $reverse={!isEven}>
         <img src={project.img} alt={project.title} />
       </ImageWrapper>

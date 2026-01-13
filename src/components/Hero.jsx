@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes, useTheme } from 'styled-components';
+import { motion } from 'framer-motion';
 
 const float = keyframes`
   0% { transform: translateY(0px) rotateX(2deg) rotateY(-2deg); }
@@ -7,7 +8,7 @@ const float = keyframes`
   100% { transform: translateY(0px) rotateX(2deg) rotateY(-2deg); }
 `;
 
-const HeroSection = styled.section`
+const HeroSection = styled(motion.section)`
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -15,9 +16,6 @@ const HeroSection = styled.section`
   background: ${({ theme }) => theme.bg};
   color: ${({ theme }) => theme.text};
   padding: 4rem 6rem;
-  opacity: ${({ $animate }) => ($animate ? 1 : 0)};
-  transform: ${({ $animate }) => ($animate ? 'translateY(0)' : 'translateY(40px)')};
-  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
 
   @media (max-width: 1024px) {
     padding: 8rem 2rem 4rem;
@@ -194,19 +192,19 @@ const Availability = styled.div`
 `;
 
 const Hero = () => {
-  const [animate, setAnimate] = useState(false);
   const theme = useTheme();
   
-  useEffect(() => {
-    setAnimate(true);
-  }, []);
-
   const heroImage = theme.bg === '#000' 
     ? "/images/hero-dark.png" 
     : "/images/Profile.picture(2).jpg";
 
   return (
-    <HeroSection id="hero" $animate={animate}>
+    <HeroSection 
+      id="hero"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+    >
       <HeroContent>
         <LeftCol>
           <Availability>Available for work</Availability>

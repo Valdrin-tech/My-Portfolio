@@ -22,6 +22,10 @@ const GlobalStyle = createGlobalStyle`
   *, *::before, *::after {
     box-sizing: border-box;
   }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: ${({ theme }) => theme.bg};
@@ -30,6 +34,23 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: ${({ theme }) => theme.bg};
+  }
+  ::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.bg === '#000' ? '#222' : '#ddd'};
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: ${({ theme }) => theme.bg === '#000' ? '#333' : '#ccc'};
   }
 `;
 
