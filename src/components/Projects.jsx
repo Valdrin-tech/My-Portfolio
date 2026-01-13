@@ -1,198 +1,241 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const ProjectsSection = styled.section`
   width: 100%;
-  padding: 4rem 0 2rem 0;
+  padding: 8rem 2rem;
+  background: ${({ theme }) => theme.bg};
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${({ theme }) => theme.bg};
 `;
 
-const ProjectsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 2.5rem;
-  width: 90%;
+const SectionTitle = styled.h2`
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 700;
+  margin-bottom: 6rem;
+  opacity: 0.6;
+  text-align: center;
+  width: 100%;
+`;
+
+const ProjectsContainer = styled.div`
   max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const ProjectCard = styled.a`
-  background: #111;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.12);
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  text-decoration: none;
-  transition: transform 0.18s cubic-bezier(0.4,0,0.2,1), box-shadow 0.18s cubic-bezier(0.4,0,0.2,1);
-  will-change: transform;
-  ${({ $angle, $offset }) => `
-    transform: rotate(${$angle}deg) translateY(${$offset}px);
-  `}
-  &:hover {
-    transform: scale(1.035) rotate(0deg) translateY(-2px);
-    box-shadow: 0 6px 32px 0 rgba(0,0,0,0.18);
-    z-index: 2;
+  gap: 12rem;
+`;
+
+const ProjectCard = styled.div`
+  display: grid;
+  grid-template-columns: ${({ $reverse }) => ($reverse ? '1fr 1.2fr' : '1.2fr 1fr')};
+  align-items: center;
+  position: relative;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: ${({ $visible }) => ($visible ? 'translateY(0)' : 'translateY(80px)')};
+  transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 `;
 
-const ProjectImage = styled.img`
-  width: 100%;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  background: #222;
-  display: block;
-`;
-
-const ProjectInfo = styled.div`
-  padding: 1rem 1rem;
+const ContentBox = styled.div`
+  background: #000;
+  padding: 4rem;
+  color: #fff;
+  z-index: 2;
+  margin-left: ${({ $reverse }) => ($reverse ? '0' : '-15%')};
+  margin-right: ${({ $reverse }) => ($reverse ? '-15%' : '0')};
+  grid-column: ${({ $reverse }) => ($reverse ? '1' : '2')};
+  grid-row: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background: #fff;
-  text-align: center;
-  margin-top: auto;
+  gap: 1.5rem;
+  box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  @media (max-width: 968px) {
+    margin: -20% 0 0 0;
+    padding: 3rem 2rem;
+    width: 90%;
+    align-self: ${({ $reverse }) => ($reverse ? 'flex-start' : 'flex-end')};
+    grid-column: 1;
+  }
+`;
+
+const ImageWrapper = styled.div`
   width: 100%;
-  margin-left: auto;
-  margin-right: auto;
+  aspect-ratio: 16/10;
+  overflow: hidden;
   position: relative;
-  z-index: 2;
+  z-index: 1;
+  background: #eee;
+  grid-column: ${({ $reverse }) => ($reverse ? '2' : '1')};
+  grid-row: 1;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%) brightness(0.9);
+    transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.8s ease;
+  }
+
+  @media (max-width: 968px) {
+    grid-column: 1;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+    filter: grayscale(0%) brightness(1);
+  }
 `;
 
-const ProjectTitle = styled.div`
-  color: #575252ff;
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin-bottom: 0.2rem;
-`;
-
-const ProjectLinkRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.7rem;
-  margin-top: 0.2rem;
-`;
-
-const ProjectDomain = styled.span`
-  color: #fff;
-  font-size: 1.08rem;
-  font-weight: 500;
-  opacity: 0.7;
-`;
-
-const ArrowIcon = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.3rem;
-  height: 2.3rem;
-  border-radius: 50%;
-  background: #fff;
-  color: #111;
-  font-size: 1.2rem;
-  margin: 1.2rem auto 0 auto;
-  box-shadow: 0 1px 6px 0 rgba(0,0,0,0.08);
-  transition: background 0.18s, color 0.18s;
-  cursor: pointer;
-  position: absolute;
-  top: -0.8rem;
-  right: 0.5rem;
-  z-index: 3;
+const Category = styled.span`
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: ${({ $color }) => $color || '#ff00ff'};
 `;
 
 const ProjectDesc = styled.p`
-  color: #575252ff;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.6;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
 `;
 
-// Placeholder images and info
-const projects = [
-  {
-    title: 'Barber Cultr',
-    domain: 'barbercultr.com',
-    desc: 'A modern barber shop website with booking features and service listings.',
-    url: 'https://barber-cultr.netlify.app/',
-    img: '/images/Screenshot 2026-01-12 at 15.24.38.png',
-  },
-  {
-    title: 'TR Glaubau',
-    domain: 'trglaubau.com',
-    desc: 'A construction and landscaping company website showcasing their projects and services.',
-    url: 'https://tr-glaubau.netlify.app/',
-    img: '/images/Screenshot 2026-01-12 at 15.26.20.png',
-  },
-  {
-    title: 'beinRücker Galabau',
-    domain: 'beinrucker-galabau.netlify.app',
-    desc: 'A landscaping and garden design company showcasing their services and portfolio.',
-    url: 'https://beinrucker-galabau.netlify.app/',
-    img: '/images/Screenshot 2026-01-12 at 15.27.41.png',
-  },
-  {
-    title: 'Creative Agency',
-    domain: 'creativeagency.com',
-    desc: 'A portfolio site for a creative agency showcasing their projects and services.',
-    url: 'https://creativeagency.com',
-    img: '/images/images122.webp',
-  },
-  {
-    title: 'Finance Tool',
-    domain: 'financetool.com',
-    desc: 'A web application providing financial planning and budgeting tools for users.',
-    url: 'https://financetool.com',
-    img: '/images/images133.webp',
-  },
-  {
-    title: 'Outdoor Blog',
-    domain: 'outdoorblog.com',
-    desc: 'A blog dedicated to outdoor adventures, gear reviews, and travel tips.',
-    url: 'https://outdoorblog.com',
-    img: '/images/image.6.webp',
-  },
-];
+const ProjectTitle = styled.h3`
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.1;
 
-const Projects = () => (
-  <ProjectsSection id="projects">
-    <ProjectsGrid>
-      {projects.map((project, idx) => {
-        // Alternate angles and offsets for a 'breaking' collage look
-        const angles = [-4, 3, -2, 5, -3, 2];
-        const offsets = [-10, 12, -6, 14, -8, 10];
-        const angle = angles[idx % angles.length];
-        const offset = offsets[idx % offsets.length];
-        return (
-          <ProjectCard
-            key={idx}
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            $angle={angle}
-            $offset={offset}
-          >
-            <ProjectImage src={project.img} alt={project.title} />
-            <ProjectInfo>
-              <ProjectTitle>{project.title}</ProjectTitle>
-              <ProjectDesc>{project.desc}</ProjectDesc>
-              <ProjectLinkRow>
-                <ProjectDomain>{project.domain}</ProjectDomain>
-              </ProjectLinkRow>
-              <ArrowIcon>
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 11L11 7M11 7H7M11 7V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </ArrowIcon>
-            </ProjectInfo>
-          </ProjectCard>
-        );
-      })}
-    </ProjectsGrid>
-  </ProjectsSection>
-);
+  @media (max-width: 1200px) {
+    font-size: 2.5rem;
+  }
+`;
+
+const ViewLink = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: gap 0.3s ease;
+
+  svg {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    gap: 1.5rem;
+    svg {
+      transform: translateX(5px);
+    }
+  }
+`;
+
+const ProjectItem = ({ project, index }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef();
+  const isEven = index % 2 === 0;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => {
+      if (ref.current) observer.unobserve(ref.current);
+    };
+  }, []);
+
+  const categories = ['BRANDING', 'PRODUCT DESIGN', 'UI/UX DESIGN', 'WEB DEVELOPMENT'];
+  const colors = ['#f8b4d9', '#f8d2b4', '#b4f8e0', '#b4d7f8'];
+
+  return (
+    <ProjectCard ref={ref} $visible={isVisible} $index={index} $reverse={!isEven}>
+      <ImageWrapper $reverse={!isEven}>
+        <img src={project.img} alt={project.title} />
+      </ImageWrapper>
+      <ContentBox $reverse={!isEven}>
+        <Category $color={colors[index % colors.length]}>
+          {categories[index % categories.length]}
+        </Category>
+        <ProjectTitle>{project.title}</ProjectTitle>
+        <ProjectDesc>{project.description}</ProjectDesc>
+        <ViewLink href={project.url} target="_blank">
+          View Project 
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4.16666 10H15.8333" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M10.8333 5L15.8333 10L10.8333 15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </ViewLink>
+      </ContentBox>
+    </ProjectCard>
+  );
+};
+
+const Projects = () => {
+  const projects = [
+    {
+      title: 'Luta Autoservis',
+      domain: 'luta-autoservis.com',
+      description: 'A premium automotive service platform featuring real-time booking and comprehensive maintenance tracking.',
+      url: 'https://luta-autoservis.com/',
+      img: '/images/luta-autoservis.png',
+    },
+    {
+      title: 'TR Glaubau',
+      domain: 'trglaubau.com',
+      description: 'Sophisticated construction and architecture portfolio showcasing large-scale infrastructure projects.',
+      url: 'https://tr-glaubau.netlify.app/',
+      img: '/images/Screenshot 2026-01-12 at 15.26.20.png',
+    },
+    {
+      title: 'beinRücker Galabau',
+      domain: 'beinrucker-galabau.netlify.app',
+      description: 'Modern landscaping and garden design interface with a focus on visual storytelling and nature.',
+      url: 'https://beinrucker-galabau.netlify.app/',
+      img: '/images/Screenshot 2026-01-12 at 15.27.41.png',
+    },
+    {
+      title: 'Creative Agency',
+      domain: 'creativeagency.com',
+      description: 'A minimalist digital agency showcase focusing on high-end motion design and interactive experiences.',
+      url: 'https://creativeagency.com',
+      img: '/images/images122.webp',
+    }
+  ];
+
+  return (
+    <ProjectsSection id="projects">
+      <SectionTitle>Selected Works</SectionTitle>
+      <ProjectsContainer>
+        {projects.map((project, idx) => (
+          <ProjectItem key={idx} project={project} index={idx} />
+        ))}
+      </ProjectsContainer>
+    </ProjectsSection>
+  );
+};
 
 export default Projects;

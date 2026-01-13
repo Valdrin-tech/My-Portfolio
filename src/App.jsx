@@ -23,6 +23,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
   body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: ${({ theme }) => theme.bg};
     color: ${({ theme }) => theme.text};
     transition: background 0.2s, color 0.2s;

@@ -1,143 +1,242 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes, useTheme } from 'styled-components';
+
+const float = keyframes`
+  0% { transform: translateY(0px) rotateX(2deg) rotateY(-2deg); }
+  50% { transform: translateY(-15px) rotateX(-2deg) rotateY(2deg); }
+  100% { transform: translateY(0px) rotateX(2deg) rotateY(-2deg); }
+`;
 
 const HeroSection = styled.section`
-  min-height: 80vh;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: ${({ theme }) => theme.bg};
   color: ${({ theme }) => theme.text};
-  text-align: center;
-  padding: 9rem 3rem 5rem 4rem;
-    opacity: ${({ $animate }) => ($animate ? 1 : 0)};
-    transform: ${({ $animate }) => ($animate ? 'translateY(0)' : 'translateY(40px)')};
-  transition: opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1);
-`;
+  padding: 4rem 6rem;
+  opacity: ${({ $animate }) => ($animate ? 1 : 0)};
+  transform: ${({ $animate }) => ($animate ? 'translateY(0)' : 'translateY(40px)')};
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
 
-const Intro = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.7rem;
-  margin-bottom: 0rem 1rem 1.5rem 1rem;
-`;
-
-const IntroLine = styled.div`
-  font-size: 1.08rem;
-  color: ${({ theme }) => theme.text};
-  opacity: 0.85;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const Availability = styled.span`
-  display: inline-flex;
-  align-items: center;
-  font-size: 1.02rem;
-  color: #43ff7c;
-  font-weight: 500;
-  margin-right: 0.5rem;
-  &::before {
-    content: '';
-    display: inline-block;
-    width: 0.7em;
-    height: 0.7em;
-    background: #43ff7c;
-    border-radius: 50%;
-    margin-right: 0.4em;
-    box-shadow: 0 0 6px #43ff7c99;
+  @media (max-width: 1024px) {
+    padding: 8rem 2rem 4rem;
   }
 `;
 
+const HeroContent = styled.div`
+  max-width: 1400px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: center;
+  gap: 4rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 4rem;
+  }
+`;
+
+const LeftCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  z-index: 2;
+`;
+
+const CenterCol = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 2000px;
+  position: relative;
+`;
+
+const RightCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  z-index: 2;
+  @media (max-width: 1024px) {
+    align-items: center;
+  }
+`;
+
+const ImageWrapper = styled.div`
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 0.85;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: ${float} 6s ease-in-out infinite;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+
+  &:hover {
+    transform: scale(1.02) rotateY(10deg) rotateX(5deg);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 10%;
+    width: 80%;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.4);
+    filter: blur(30px);
+    border-radius: 50%;
+    transform: rotateX(80deg);
+    z-index: -1;
+  }
+`;
+
+const HeroImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.5s ease;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+`;
+
 const Name = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: ${({ theme }) => theme.text};
-  margin-top: 1.1rem;
-  line-height: 1;
+  font-family: 'Playfair Display', serif;
+  font-size: 5.5rem;
+  font-weight: 900;
+  line-height: 0.9;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: -2px;
+  font-style: italic;
+
+  @media (max-width: 1200px) {
+    font-size: 4rem;
+  }
+`;
+
+const Title = styled.h2`
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 600;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
 `;
 
 const Tagline = styled.p`
-  font-size: 1.18rem;
-  color: ${({ theme }) => theme.text};
-  opacity: 0.8;
-  margin-top: 0.2rem;
-  max-width: 500px;
+  font-family: 'Lora', serif;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  max-width: 400px;
+  font-style: italic;
+
+  @media (max-width: 1024px) {
+    max-width: 100%;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
-  gap: 2rem;
-  margin-top: 1.2rem;
-`;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 300px;
 
-const HeroButton = styled.a`
-  padding: 0.85rem 2.2rem;
-  border-radius: 100px;
-  border: 1.5px solid ${({ theme }) => theme.text};
-  background: ${({ primary, theme }) =>
-    primary
-      ? theme.bg === '#000'
-        ? '#fff'
-        : '#000'
-      : 'transparent'};
-  color: ${({ primary, theme }) =>
-    primary
-      ? theme.bg === '#000'
-        ? '#000'
-        : '#fff'
-      : theme.text};
-  font-size: 1.08rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background 0.18s, color 0.18s;
-  cursor: pointer;
-  &:hover, &:focus {
-    background: ${({ primary, theme }) =>
-      primary
-        ? theme.bg === '#000'
-          ? '#eaeaea'
-          : '#222'
-        : theme.text};
-    color: ${({ primary, theme }) =>
-      primary
-        ? theme.bg === '#000'
-          ? '#000'
-          : '#fff'
-        : theme.bg};
+  @media (max-width: 1024px) {
+    align-items: center;
   }
 `;
 
+const HeroButton = styled.a`
+  padding: 1.2rem 2.5rem;
+  border-radius: 0;
+  border: 1px solid ${({ theme }) => theme.text};
+  background: ${({ $primary, theme }) => ($primary ? theme.text : 'transparent')};
+  color: ${({ $primary, theme }) => ($primary ? theme.bg : theme.text)};
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    background: ${({ $primary, theme }) => ($primary ? 'transparent' : theme.text)};
+    color: ${({ $primary, theme }) => ($primary ? theme.text : theme.bg)};
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+`;
+
+const Availability = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  
+  &::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #43ff7c;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #43ff7c;
+  }
+`;
 
 const Hero = () => {
   const [animate, setAnimate] = useState(false);
+  const theme = useTheme();
+  
   useEffect(() => {
     setAnimate(true);
   }, []);
+
+  const heroImage = theme.bg === '#000' 
+    ? "/images/hero-dark.png" 
+    : "/images/Profile.picture(2).jpg";
+
   return (
-      <HeroSection id="hero" $animate={animate}>
-      <Intro>
-        <IntroLine>
-          <span role="img" aria-label="waving hand">👋</span>
-          Hello, I'm Valdrin
-          Frontend Developer & UI Builder
-        </IntroLine>
-      </Intro>
-      <Name>Crafting modern, accessible web interfaces <br /> with clean code, performance, and precision.</Name>
-      <Tagline>
-        Turning ideas into interactive interfaces. <br /> JavaScript • React • Tailwind CSS • UI/UX • Responsive Design
-      </Tagline>
-      <ButtonGroup>
-        <HeroButton href="#projects">View Projects</HeroButton>
-        <HeroButton href="#contact" primary>Book a free call</HeroButton>
-      </ButtonGroup>
-      <div style={{ marginTop: '1.5rem' }}>
-        <Availability>Available for work</Availability>
-      </div>
+    <HeroSection id="hero" $animate={animate}>
+      <HeroContent>
+        <LeftCol>
+          <Availability>Available for work</Availability>
+          <div>
+            <Name>Valdrin<br />Shala</Name>
+            <Title>Frontend Developer</Title>
+            
+          </div>
+        </LeftCol>
+        
+        <CenterCol>
+          <ImageWrapper>
+            <HeroImage 
+              src={heroImage} 
+              alt="Valdrin Shala" 
+            />
+          </ImageWrapper>
+        </CenterCol>
+        
+        <RightCol>
+          <Tagline>
+            Crafting modern, accessible web interfaces with clean code, performance, and precision. Turning ideas into interactive realities.
+          </Tagline>
+          
+          <ButtonGroup>
+            <HeroButton href="#projects" $primary>View Portfolio</HeroButton>
+            <HeroButton href="#contact">Let's Talk</HeroButton>
+          </ButtonGroup>
+        </RightCol>
+      </HeroContent>
     </HeroSection>
   );
 };
