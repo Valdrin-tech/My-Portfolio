@@ -62,6 +62,16 @@ const RightCol = styled.div`
   }
 `;
 
+const TextGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  @media (max-width: 1024px) {
+    align-items: center;
+  }
+`;
+
 const ImageWrapper = styled.div`
   width: 100%;
   max-width: 480px;
@@ -119,7 +129,6 @@ const Title = styled.h2`
   letter-spacing: 3px;
   font-weight: 600;
   opacity: 0.7;
-  margin-bottom: 0.5rem;
 `;
 
 const Tagline = styled.p`
@@ -132,43 +141,6 @@ const Tagline = styled.p`
 
   @media (max-width: 1024px) {
     max-width: 100%;
-  }
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 300px;
-
-  @media (max-width: 1024px) {
-    align-items: center;
-  }
-`;
-
-const HeroButton = styled.a`
-  padding: 1.2rem 2.5rem;
-  border-radius: 0;
-  border: 1px solid ${({ theme }) => theme.text};
-  background: ${({ $primary, theme }) => ($primary ? theme.text : 'transparent')};
-  color: ${({ $primary, theme }) => ($primary ? theme.bg : theme.text)};
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  cursor: pointer;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-
-  &:hover {
-    background: ${({ $primary, theme }) => ($primary ? 'transparent' : theme.text)};
-    color: ${({ $primary, theme }) => ($primary ? theme.text : theme.bg)};
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
   }
 `;
 
@@ -207,12 +179,10 @@ const Hero = () => {
     >
       <HeroContent>
         <LeftCol>
-          <Availability>Available for work</Availability>
-          <div>
+          <TextGroup>
             <Name>Valdrin<br />Shala</Name>
             <Title>Frontend Developer</Title>
-            
-          </div>
+          </TextGroup>
         </LeftCol>
         
         <CenterCol>
@@ -225,14 +195,12 @@ const Hero = () => {
         </CenterCol>
         
         <RightCol>
-          <Tagline>
-            Crafting modern, accessible web interfaces with clean code, performance, and precision. Turning ideas into interactive realities.
-          </Tagline>
-          
-          <ButtonGroup>
-            <HeroButton href="#projects" $primary>View Portfolio</HeroButton>
-            <HeroButton href="#contact">Let's Talk</HeroButton>
-          </ButtonGroup>
+          <TextGroup>
+            <Tagline>
+              Crafting modern, accessible web interfaces with clean code, performance, and precision. Turning ideas into interactive realities.
+            </Tagline>
+            <Availability>Available for work</Availability>
+          </TextGroup>
         </RightCol>
       </HeroContent>
     </HeroSection>

@@ -137,7 +137,7 @@ const Footer = () => {
       <FooterGrid>
         <ContactInfo>
           <FooterLabel>Drop me a line</FooterLabel>
-          <EmailLink href="mailto:Valdrinsh.12@gmail.com">Valdrinsh.12@gmail.com</EmailLink>
+          <EmailLink href="mailto:Valdrinsh.12@gmail.com">valdrinsh.12@gmail.com</EmailLink>
         </ContactInfo>
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>

@@ -128,7 +128,7 @@ const TerminalLabel = styled.span`
 `;
 
 const TerminalText = styled.div`
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 2.2rem;
   font-weight: 700;
   color: #fff;
@@ -157,12 +157,12 @@ const DecorativeText = styled.div`
   position: absolute;
   top: -2rem;
   left: -2rem;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 8rem;
   font-weight: 900;
   color: ${({ theme }) => (theme.bg === '#000' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)')};
   z-index: -1;
-  font-style: Italic;
+  font-style: italic;
   pointer-events: none;
   text-transform: uppercase;
 `;
@@ -170,15 +170,16 @@ const DecorativeText = styled.div`
 const ContentSide = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1.5rem;
 `;
 
 const AboutTitle = styled.h2`
-  font-family: 'Playfair Display', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 4rem;
-  font-weight: 800;
-  line-height: 1;
-  margin: 0.5rem 0 1rem 0;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: -2px;
   
   @media (max-width: 480px) {
     font-size: 3rem;
@@ -189,19 +190,23 @@ const Subtitle = styled.h3`
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 4px;
-  font-weight: 600;
+  font-weight: 700;
   color: #3b82f6;
-  margin-bottom: -1rem;
+  margin: 0 0 0.5rem 0;
 `;
 
 const AboutBody = styled.div`
-  font-family: 'Lora', serif;
-  font-size: 1.15rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
   line-height: 1.8;
   opacity: 0.8;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
+
+  p {
+    margin: 0;
+  }
 `;
 
 const ExperienceSection = styled.div`
@@ -353,8 +358,14 @@ const About = () => {
           </ExperienceSection>
           
           <LinksGrid>
-            <ExternalLink href="https://linkedin.com" target="_blank">LinkedIn</ExternalLink>
-            <ExternalLink href="https://github.com" target="_blank">GitHub</ExternalLink>
+            <ExternalLink href="https://linkedin.com" target="_blank">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm15.5 11.268h-3v-5.604c0-1.337-.025-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.039 0 3.6 2.001 3.6 4.601v5.595z"/></svg>
+              LinkedIn
+            </ExternalLink>
+            <ExternalLink href="https://github.com" target="_blank">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.041-1.412-4.041-1.412-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.605-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.553 3.297-1.23 3.297-1.23.653 1.653.242 2.873.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.803 5.624-5.475 5.921.43.371.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              GitHub
+            </ExternalLink>
           </LinksGrid>
         </ContentSide>
       </Container>
